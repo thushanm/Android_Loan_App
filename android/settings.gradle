@@ -1,6 +1,15 @@
-pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }
-plugins { id("com.facebook.react.settings") }
-extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
-rootProject.name = 'LoanAndroid'
+pluginManagement {
+    includeBuild("../node_modules/@react-native/gradle-plugin")
+}
+
+plugins {
+    id("com.facebook.react.settings")
+}
+
+rootProject.name = 'LoanAndroidApp'
 include ':app'
+
+// This line helps find and link libraries like AsyncStorage
+apply from: "../../node_modules/react-native/react.gradle"
+
 includeBuild('../node_modules/@react-native/gradle-plugin')
