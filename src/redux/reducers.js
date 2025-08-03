@@ -15,10 +15,9 @@ const initialAuthState = {
 };
 
 const initialLoanState = {
-    list: [], // Use a clear name like 'list' instead of 'loans'
+    list: [],
     error: null,
 };
-
 
 
 const authReducer = (state = initialAuthState, action) => {
@@ -32,13 +31,12 @@ const authReducer = (state = initialAuthState, action) => {
     }
 };
 
+
 const loanReducer = (state = initialLoanState, action) => {
     switch (action.type) {
         case FETCH_LOANS_SUCCESS:
-
             return { ...state, list: action.payload, error: null };
         case SUBMIT_LOAN_SUCCESS:
-
             return { ...state, list: [...state.list, action.payload] };
         case FETCH_LOANS_FAILURE:
         case SUBMIT_LOAN_FAILURE:
@@ -47,6 +45,7 @@ const loanReducer = (state = initialLoanState, action) => {
             return state;
     }
 };
+
 
 const rootReducer = combineReducers({
     auth: authReducer,

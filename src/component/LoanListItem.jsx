@@ -1,48 +1,35 @@
 import React from 'react';
-import { View, Text, StyleSheet, Button, Alert } from 'react-native';
-import { useDispatch } from 'react-redux';
-import { deleteLoanApplication } from '../redux/actions';
-import { Colors } from '../utils/Colors';
+import { View, Text, StyleSheet } from 'react-native';
 
-const LoanListItem = ({ application, navigation }) => {
-    const dispatch = useDispatch();
-
-    const handleDelete = () => {
-        Alert.alert(
-            'Confirm Deletion',
-            'Are you sure you want to delete this application?',
-            [
-                { text: 'Cancel', style: 'cancel' },
-                {
-                    text: 'Delete',
-                    style: 'destructive',
-                    onPress: () => dispatch(deleteLoanApplication(application.id)),
-                },
-            ],
-        );
-    };
-
-    const handleEdit = () => {
-        navigation.navigate('LoanApplicationForm', { application });
-    };
-
+const LoanListItem = ({ loan }) => {
+    if (!loan) {
+        return null;
+    }
     return (
-        <View style={styles.card}>
-            <Text style={styles.title}>{application.name}</Text>
-            <Text>ID: ...{application.id.slice(-5)}</Text>
-            <Text>Email: {application.email}</Text>
-            <View style={styles.actions}>
-                <Button title="Edit" onPress={handleEdit} color={Colors.secondary} />
-                <Button title="Delete" onPress={handleDelete} color={Colors.danger} />
-            </View>
+        <View style={styles.itemContainer}>
+            <Text style={styles.amount}>Amount: ${loan.amount}</Text>
+            <Text style={styles.term}>Term: {loan.term} months</Text>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    card: { backgroundColor: 'white', padding: 15, margin: 10, borderRadius: 8, elevation: 2 },
-    title: { fontSize: 18, fontWeight: 'bold' },
-    actions: { flexDirection: 'row', justifyContent: 'space-around', marginTop: 15 },
+    itemContainer: {
+        backgroundColor: '#f9f9f9',
+        padding: 15,
+        marginVertical: 8,
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: '#eee',
+    },
+    amount: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    term: {
+        fontSize: 14,
+        color: 'gray',
+    },
 });
 
 export default LoanListItem;

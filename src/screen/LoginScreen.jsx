@@ -3,10 +3,9 @@ import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { login } from '../redux/actions';
 
-
 const LoginScreen = ({ user, error, login, navigation }) => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [username, setUsername] = useState('test');
+    const [password, setPassword] = useState('password');
 
     const handleLogin = () => {
         login(username, password);
@@ -15,23 +14,22 @@ const LoginScreen = ({ user, error, login, navigation }) => {
 
     useEffect(() => {
         if (user) {
-
             navigation.navigate('LoanList');
         }
-    }, [user]);
+    }, [user, navigation]);
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Login</Text>
+            <Text style={styles.title}>Loan App Login</Text>
             <TextInput
                 style={styles.input}
-                placeholder="Username"
+                placeholder="Username (use 'test')"
                 value={username}
                 onChangeText={setUsername}
             />
             <TextInput
                 style={styles.input}
-                placeholder="Password"
+                placeholder="Password (use 'password')"
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
@@ -43,29 +41,10 @@ const LoginScreen = ({ user, error, login, navigation }) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        padding: 20,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-        textAlign: 'center',
-    },
-    input: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 12,
-        paddingHorizontal: 8,
-    },
-    error: {
-        color: 'red',
-        textAlign: 'center',
-        marginTop: 10,
-    },
+    container: { flex: 1, justifyContent: 'center', padding: 20 },
+    title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20, textAlign: 'center' },
+    input: { height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 12, paddingHorizontal: 8 },
+    error: { color: 'red', textAlign: 'center', marginTop: 10 },
 });
 
 const mapStateToProps = (state) => ({
@@ -73,8 +52,4 @@ const mapStateToProps = (state) => ({
     error: state.auth.error,
 });
 
-const mapDispatchToProps = {
-    login,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);
+export default connect(mapStateToProps, { login })(LoginScreen);

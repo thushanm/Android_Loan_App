@@ -1,11 +1,40 @@
-export const LOGIN = 'LOGIN';
-export const LOGOUT = 'LOGOUT';
-export const ADD_LOAN_APPLICATION = 'ADD_LOAN_APPLICATION';
-export const UPDATE_LOAN_APPLICATION = 'UPDATE_LOAN_APPLICATION';
-export const DELETE_LOAN_APPLICATION = 'DELETE_LOAN_APPLICATION';
+// Action Types
+export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
+export const LOGIN_FAILURE = 'LOGIN_FAILURE';
+export const FETCH_LOANS_SUCCESS = 'FETCH_LOANS_SUCCESS';
+export const FETCH_LOANS_FAILURE = 'FETCH_LOANS_FAILURE';
+export const SUBMIT_LOAN_SUCCESS = 'SUBMIT_LOAN_SUCCESS';
+export const SUBMIT_LOAN_FAILURE = 'SUBMIT_LOAN_FAILURE';
 
-export const login = () => ({ type: LOGIN });
-export const logout = () => ({ type: LOGOUT });
-export const addLoanApplication = (application) => ({ type: ADD_LOAN_APPLICATION, payload: application });
-export const updateLoanApplication = (application) => ({ type: UPDATE_LOAN_APPLICATION, payload: application });
-export const deleteLoanApplication = (id) => ({ type: DELETE_LOAN_APPLICATION, payload: id });
+
+const MOCK_LOANS = [
+    { id: 1, amount: 5000, term: 12 },
+    { id: 2, amount: 10000, term: 24 },
+];
+
+
+export const login = (username, password) => (dispatch) => {
+    if (username === 'test' && password === 'password') {
+        dispatch({ type: LOGIN_SUCCESS, payload: { name: username } });
+    } else {
+        dispatch({ type: LOGIN_FAILURE, payload: 'Invalid username or password' });
+    }
+};
+
+export const fetchLoans = () => (dispatch) => {
+    try {
+     dispatch({ type: FETCH_LOANS_SUCCESS, payload: MOCK_LOANS });
+    } catch (error) {
+        dispatch({ type: FETCH_LOANS_FAILURE, payload: error.message });
+    }
+};
+
+export const submitLoan = (loanDetails) => (dispatch) => {
+    try {
+
+        const newLoan = { ...loanDetails, id: Math.random() }; // Create a random ID
+        dispatch({ type: SUBMIT_LOAN_SUCCESS, payload: newLoan });
+    } catch (error) {
+        dispatch({ type: SUBMIT_LOAN_FAILURE, payload: error.message });
+    }
+};

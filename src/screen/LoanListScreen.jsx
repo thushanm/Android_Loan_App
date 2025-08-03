@@ -1,16 +1,27 @@
 import React, { useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Button } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Button, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import { fetchLoans } from '../redux/actions';
 import LoanListItem from '../component/LoanListItem';
 
-const LoanListScreen = ({ loans, fetchLoans, navigation }) => {
+const LoanListScreen = ({ loans, error, fetchLoans, navigation }) => {
     useEffect(() => {
         fetchLoans();
     }, [fetchLoans]);
 
+    const safeLoans = Array.isArray(loans) ? loans : [];
+
+    if (error) {
+        return (
+            <View style={styles.centerContainer}>
+                <Text style={styles.errorText}>Failed to load loans: {error}</Text>
+                <Button title="Retry" onPress={fetchLoans} />
+            </View>
+        );
+    }
+
     const renderItem = ({ item }) => (
-        <LoanListItem loan={item} />
+        item ? <LoanListItem loan={item} /> : null
     );
 
     return (
@@ -20,10 +31,14 @@ const LoanListScreen = ({ loans, fetchLoans, navigation }) => {
                 onPress={() => navigation.navigate('LoanApplicationForm')}
             />
             <FlatList
-                data={loans}
+                data={safeLoans}
                 renderItem={renderItem}
-                keyExtractor={(item) => item.id.toString()}
-                ListEmptyComponent={<Text>No loans found.</Text>}
+                keyExtractor={(item) => item ? item.id.toString() : Math.random().toString()}
+                ListEmptyComponent={
+                    <View style={styles.centerContainer}>
+                        <Text>No loans found.</Text>
+                    </View>
+                }
             />
         </View>
     );
@@ -34,11 +49,20 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 10,
     },
+    centerContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    errorText: {
+        color: 'red',
+        marginBottom: 10,
+    },
 });
 
-// 👇 THE FIX IS HERE 👇
 const mapStateToProps = (state) => ({
-    loans: state.loans.loans,
+    loans: state.loans.list,
+    error: state.loans.error,
 });
 
 const mapDispatchToProps = {
