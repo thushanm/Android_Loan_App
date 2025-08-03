@@ -1,47 +1,56 @@
-import { LOGIN, LOGOUT, ADD_LOAN_APPLICATION, UPDATE_LOAN_APPLICATION, DELETE_LOAN_APPLICATION } from './actions';
 import { combineReducers } from 'redux';
+import {
+    LOGIN_SUCCESS,
+    LOGIN_FAILURE,
+    SUBMIT_LOAN_SUCCESS,
+    SUBMIT_LOAN_FAILURE,
+    FETCH_LOANS_SUCCESS,
+    FETCH_LOANS_FAILURE,
+} from './actions';
 
-const initialLoanState = {
-    applications: [],
-};
 
 const initialAuthState = {
-    isLoggedIn: false,
+    user: null,
+    error: null,
 };
 
-function loanReducer(state = initialLoanState, action) {
+const initialLoanState = {
+    list: [], // Use a clear name like 'list' instead of 'loans'
+    error: null,
+};
+
+
+
+const authReducer = (state = initialAuthState, action) => {
     switch (action.type) {
-        case ADD_LOAN_APPLICATION:
-            return { ...state, applications: [...state.applications, action.payload] };
-        case UPDATE_LOAN_APPLICATION:
-            return {
-                ...state,
-                applications: state.applications.map(app =>
-                    app.id === action.payload.id ? action.payload : app
-                ),
-            };
-        case DELETE_LOAN_APPLICATION:
-            return {
-                ...state,
-                applications: state.applications.filter(app => app.id !== action.payload),
-            };
+        case LOGIN_SUCCESS:
+            return { ...state, user: action.payload, error: null };
+        case LOGIN_FAILURE:
+            return { ...state, user: null, error: action.payload };
         default:
             return state;
     }
-}
+};
 
-function authReducer(state = initialAuthState, action) {
+const loanReducer = (state = initialLoanState, action) => {
     switch (action.type) {
-        case LOGIN:
-            return { ...state, isLoggedIn: true };
-        case LOGOUT:
-            return { ...state, isLoggedIn: false };
+        case FETCH_LOANS_SUCCESS:
+
+            return { ...state, list: action.payload, error: null };
+        case SUBMIT_LOAN_SUCCESS:
+
+            return { ...state, list: [...state.list, action.payload] };
+        case FETCH_LOANS_FAILURE:
+        case SUBMIT_LOAN_FAILURE:
+            return { ...state, error: action.payload };
         default:
             return state;
     }
-}
+};
 
-export default combineReducers({
-    loanReducer,
-    authReducer,
+const rootReducer = combineReducers({
+    auth: authReducer,
+    loans: loanReducer,
 });
+
+export default rootReducer;

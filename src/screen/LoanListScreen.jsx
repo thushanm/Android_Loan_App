@@ -1,54 +1,48 @@
-import React from 'react';
-import { SafeAreaView, FlatList, StyleSheet, Button, Text, View } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
-import { logout } from '../redux/actions';
+import React, { useEffect } from 'react';
+import { View, Text, FlatList, StyleSheet, Button } from 'react-native';
+import { connect } from 'react-redux';
+import { fetchLoans } from '../redux/actions';
+import LoanListItem from '../component/LoanListItem';
 
-import { Colors } from '../utils/Colors';
-import LoanListItem from "../component/LoanListItem";
+const LoanListScreen = ({ loans, fetchLoans, navigation }) => {
+    useEffect(() => {
+        fetchLoans();
+    }, [fetchLoans]);
 
-const LoanListScreen = ({ navigation }) => {
-    const applications = useSelector(state => state.loanReducer.applications);
-    const dispatch = useDispatch();
-
-    React.useLayoutEffect(() => {
-        navigation.setOptions({
-            headerRight: () => (
-                <View style={{ marginRight: 10 }}>
-                    <Button onPress={handleLogout} title="Logout" color={Colors.danger} />
-                </View>
-            ),
-        });
-    }, [navigation]);
-
-    const handleLogout = () => {
-        dispatch(logout());
-        navigation.replace('Login');
-    };
+    const renderItem = ({ item }) => (
+        <LoanListItem loan={item} />
+    );
 
     return (
-        <SafeAreaView style={styles.container}>
-            <FlatList
-                data={applications}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                    <LoanListItem
-                        application={item}
-                        navigation={navigation}
-                    />
-                )}
-                ListEmptyComponent={<Text style={styles.emptyText}>No applications found.</Text>}
+        <View style={styles.container}>
+            <Button
+                title="Apply for New Loan"
+                onPress={() => navigation.navigate('LoanApplicationForm')}
             />
-            <View style={styles.addButton}>
-                <Button title="Add New Application" onPress={() => navigation.navigate('LoanApplicationForm')} color={Colors.primary} />
-            </View>
-        </SafeAreaView>
+            <FlatList
+                data={loans}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id.toString()}
+                ListEmptyComponent={<Text>No loans found.</Text>}
+            />
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: Colors.lightGray },
-    emptyText: { textAlign: 'center', marginTop: 50, fontSize: 16 },
-    addButton: { margin: 15 },
+    container: {
+        flex: 1,
+        padding: 10,
+    },
 });
 
-export default LoanListScreen;
+// 👇 THE FIX IS HERE 👇
+const mapStateToProps = (state) => ({
+    loans: state.loans.loans,
+});
+
+const mapDispatchToProps = {
+    fetchLoans,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoanListScreen);
